@@ -68,7 +68,7 @@ struct ContentView: View {
             Text("税込価格: \(Int(withTax))")
             Text("税抜価格: \(Int(withoutTax))")
 
-            if selectedTaxRate == 4 {
+            if taxRateCandidate[selectedTaxRate] == 100 {
                 Text("手始めに消費税は100パーセントじゃ！")
             }
         }
