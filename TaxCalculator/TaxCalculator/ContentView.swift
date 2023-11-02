@@ -18,16 +18,17 @@ extension UIApplication {
 
 struct ContentView: View {
 
-    @State var inputNumber: String = ""
-    @State var withoutTax: Double = 0.0
-    @State var withTax: Double = 0.0
-    @State var taxRate: Double = 0.8
+    @State private var inputNumber: String = ""
+    @State private var withoutTax: Double = 0.0
+    @State private var withTax: Double = 0.0
+    @State private var taxRate: Double = 0.0
 
     @State private var selectedTaxRate = 0
+    private let taxRateCandidate = [0, 5, 8, 10, 100]
 
     func calcPrice (originalPrice: Double, rate: Double) -> Double {
         var price: Double = 0.0
-        price = Double(originalPrice * rate)
+        price = Double(originalPrice + originalPrice * rate)
         return price
     }
 
@@ -38,15 +39,18 @@ struct ContentView: View {
                 .padding()
                 .keyboardType(.numberPad)
 
-            let taxRateCandidate = [0, 5, 8, 10, 100]
-            Picker(selection: $selectedTaxRate, label: Text("税率")) {
-                ForEach(taxRateCandidate.indices, id: \.self) { index in
-                    Text("\(taxRateCandidate[index])" + "%")
+            HStack {
+                Text("税率:")
+                Picker(selection: $selectedTaxRate, label: Text("税率")) {
+                    ForEach(taxRateCandidate.indices, id: \.self) { index in
+                        Text("\(taxRateCandidate[index])" + "%")
+                    }
                 }
             }
 
             HStack(spacing: 30) {
                 Button("計算", action: {
+                    taxRate = Double(taxRateCandidate[selectedTaxRate])
                     withoutTax = Double(inputNumber)!
                     withTax = calcPrice(originalPrice: withoutTax, rate: taxRate)
                     UIApplication.shared.endEditing()
