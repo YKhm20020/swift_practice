@@ -7,15 +7,6 @@
 
 import SwiftUI
 
-extension UIApplication {
-    func endEditing() {
-        sendAction(
-            #selector(UIResponder.resignFirstResponder),
-            to: nil, from: nil, for: nil
-        )
-    }
-}
-
 struct ContentView: View {
 
     @State private var inputNumber: String = ""
@@ -34,10 +25,22 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            TextField("価格を入力", value: $inputNumber, formatter: NumberFormatter())
-                .textFieldStyle(.roundedBorder)
-                .padding()
-                .keyboardType(.numberPad)
+            Spacer()
+                .frame(height: 250)
+
+            HStack {
+                TextField("価格を入力", value: $inputNumber, formatter: NumberFormatter())
+                    .textFieldStyle(.roundedBorder)
+                    .padding()
+                    .keyboardType(.numberPad)
+
+                Button(action: {
+                    self.inputNumber = ""
+                }) {
+                    Image(systemName: "multiply.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+            }
 
             HStack {
                 Text("税率:")
@@ -50,16 +53,21 @@ struct ContentView: View {
 
             HStack(spacing: 30) {
                 Button("計算", action: {
-                    taxRate = Double(taxRateCandidate[selectedTaxRate])
-                    withoutTax = Double(inputNumber)!
-                    withTax = calcPrice(originalPrice: withoutTax, rate: taxRate)
-                    UIApplication.shared.endEditing()
+                    if let number = Double(inputNumber) {
+                        taxRate = Double(taxRateCandidate[selectedTaxRate])
+                        withoutTax = number
+                        withTax = calcPrice(originalPrice: withoutTax, rate: taxRate)
+                        print("withoutTax: \(withoutTax), withTax: \(withTax)")
+                    } else {
+                        return
+                    }
                 })
                 .buttonStyle(.borderedProminent)
 
                 Button("クリア", role: .destructive, action: {
-                    withoutTax = 0
-                    withTax = 0
+                    inputNumber = ""
+                    withoutTax = 0.0
+                    withTax = 0.0
                 })
                 .buttonStyle(.bordered)
             }
@@ -71,6 +79,7 @@ struct ContentView: View {
             if taxRateCandidate[selectedTaxRate] == 100 {
                 Text("手始めに消費税は100パーセントじゃ！")
             }
+            Spacer()
         }
         .padding()
     }
