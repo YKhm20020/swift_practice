@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var taxRate: Double = 0.0
 
     @State private var selectedTaxRate = 0
-    private let taxRateCandidate = [0, 5, 8, 10, 100]
+    private let taxRateCandidate = [0.00, 0.05, 0.08, 0.10, 1.00]
 
     func calcPrice (originalPrice: Double, rate: Double) -> Double {
         var price: Double = 0.0
@@ -29,13 +29,13 @@ struct ContentView: View {
                 .frame(height: 250)
 
             HStack {
-                TextField("価格を入力", value: $inputNumber, formatter: NumberFormatter())
+                TextField("価格を入力", text: $inputNumber)
                     .textFieldStyle(.roundedBorder)
                     .padding()
                     .keyboardType(.numberPad)
 
                 Button(action: {
-                    self.inputNumber = ""
+                    inputNumber = ""
                 }) {
                     Image(systemName: "multiply.circle.fill")
                         .foregroundColor(.secondary)
@@ -46,13 +46,14 @@ struct ContentView: View {
                 Text("税率:")
                 Picker(selection: $selectedTaxRate, label: Text("税率")) {
                     ForEach(taxRateCandidate.indices, id: \.self) { index in
-                        Text("\(taxRateCandidate[index])" + "%")
+                        Text("\(Int(taxRateCandidate[index] * 100))" + "%")
                     }
                 }
             }
 
             HStack(spacing: 30) {
                 Button("計算", action: {
+                    print("計算 \(inputNumber)")
                     if let number = Double(inputNumber) {
                         taxRate = Double(taxRateCandidate[selectedTaxRate])
                         withoutTax = number
@@ -73,8 +74,8 @@ struct ContentView: View {
             }
             .padding(20)
 
-            Text("税込価格: \(Int(withTax))")
             Text("税抜価格: \(Int(withoutTax))")
+            Text("税込価格: \(Int(withTax))")
 
             if taxRateCandidate[selectedTaxRate] == 100 {
                 Text("手始めに消費税は100パーセントじゃ！")
