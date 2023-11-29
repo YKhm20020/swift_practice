@@ -53,7 +53,6 @@ struct ContentView: View {
 
             HStack(spacing: 30) {
                 Button("計算", action: {
-                    print("計算 \(inputNumber)")
                     if let number = Double(inputNumber) {
                         taxRate = Double(taxRateCandidate[selectedTaxRate])
                         withoutTax = number
@@ -74,13 +73,16 @@ struct ContentView: View {
             }
             .padding(20)
 
-            Text("税抜価格: \(Int(withoutTax))")
-            Text("税込価格: \(Int(withTax))")
+            VStack(spacing: 10) {
+                Text("税抜価格: \(Int(withoutTax))")
+                Text("税込価格: \(Int(withTax))")
 
-            if taxRateCandidate[selectedTaxRate] == 100 {
-                Text("手始めに消費税は100パーセントじゃ！")
+                if taxRateCandidate[selectedTaxRate] == 1.00 {
+                    Text("手始めに消費税は100パーセントじゃ！")
+                }
+
+                Spacer()
             }
-            Spacer()
         }
         .padding()
     }
